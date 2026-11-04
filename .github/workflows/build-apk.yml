@@ -1,0 +1,53 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up the Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install the SDK components the project pins
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          # Names follow the project's React Native 0.88 version catalog:
+          # compileSdk 37, build-tools 37.0.0, NDK 27.1.12297006, CMake 3.22.1.
+          # If a name does not resolve, the Android Gradle plugin downloads
+          # what it needs on first use, so this step never blocks the build.
+          sdkmanager "platforms;android-37.0" "build-tools;37.0.0" \
+            || sdkmanager "platforms;android-37" "build-tools;37.0.0" \
+            || echo "Platform/build-tools will be fetched by the Android Gradle plugin."
+          sdkmanager "ndk;27.1.12297006" "cmake;3.22.1" || true
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Generate the native Android project
+        run: bun x expo prebuild --platform android --no-install
+
+      - name: Build the release APK
+        working-directory: android
+        run: ./gradlew assembleRelease -x lint -Dorg.gradle.jvmargs=-Xmx3g
+
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: astrono-me-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
