@@ -23,6 +23,11 @@ jobs:
 
       - name: Set up the Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # The action's default package list starts with 'tools', which no
+          # longer exists in the SDK repository and makes sdkmanager exit 1.
+          # platform-tools is valid; the pinned components come next.
+          packages: platform-tools
 
       - name: Install the SDK components the project pins
         run: |
