@@ -374,6 +374,7 @@ export const CANADIAN_CITIES: City[] = [
   { name: 'Yellowknife', province: 'NT', lat: 62.45, lon: -114.37, utcOffset: -7 },
   { name: 'Whitehorse', province: 'YT', lat: 60.72, lon: -135.05, utcOffset: -7 },
   { name: 'Vancouver', province: 'BC', lat: 49.28, lon: -123.12, utcOffset: -8 },
+  { name: 'Surrey', province: 'BC', lat: 49.19, lon: -122.85, utcOffset: -8 },
   { name: 'Victoria', province: 'BC', lat: 48.43, lon: -123.37, utcOffset: -8 },
   { name: 'Kelowna', province: 'BC', lat: 49.89, lon: -119.5, utcOffset: -8 },
 ];
